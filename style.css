@@ -8,8 +8,10 @@ html{
 }
 
 body{
-    position: relative;
     height: 100%;
+    border: 20px;
+    border-style: solid;
+    border-color: black;
 }
 
 main{
@@ -24,6 +26,7 @@ footer{
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 20px;
     height: 15%;
     background-color: azure;
 }
