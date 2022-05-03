@@ -13,7 +13,7 @@ function timer  () {
     seconds++;
 
     // Format our time
-    let mins = Math.floor((seconds - (hours * 3600)) / 60);
+    let mins = Math.floor(seconds/60);
     let secs = seconds % 60;
 
     if (secs < 10) secs = "0" + secs;
