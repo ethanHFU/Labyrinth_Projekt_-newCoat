@@ -43,8 +43,8 @@ footer{
 }
 
 #playWhite{
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
    
     opacity: 0.5;
     transition: opacity 1s,  width 1s, height 1s;
@@ -54,8 +54,8 @@ footer{
 
 #playWhite:hover{
     opacity: 1;
-    width: 170px;
-    height: 170px;
+    width: 130px;
+    height: 130px;
     
 }
 
@@ -71,4 +71,22 @@ footer{
     padding: 8px;
     width: 100px;
     height: 50px;
+}
+
+
+#buttonContainer{
+    width: 90%;
+    height: 80%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+
+    border-radius: 1.5rem;
+
+
+    background-color: gray;
+
 }
