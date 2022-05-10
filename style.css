@@ -86,7 +86,14 @@ footer{
 
     border-radius: 1.5rem;
 
-
     background-color: gray;
 
+}
+
+#gamePad{
+    border: 2px solid black;
+    position: absolute;
+    left: auto;
+    top: auto;
+    
 }

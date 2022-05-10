@@ -31,3 +31,10 @@ function start(){
 }
 
 
+const canvas = document.getElementById("gamePad");
+const ctx = canvas.getContext("2d");
+const parentDiv = getElementById("gameDisplay");
+
+canvas.clientHeight = parentDiv.clientHeight;
+
+
