@@ -1,5 +1,7 @@
 const timer_el = document.getElementById("timer");
 const start_btn = document.getElementById("playWhite");
+const gamePad = document.getElementById("gameDisplay");
+
 
 let seconds = 0;
 let interval = null;
@@ -31,10 +33,29 @@ function start(){
 }
 
 
-const canvas = document.getElementById("gamePad");
-const ctx = canvas.getContext("2d");
-const parentDiv = getElementById("gameDisplay");
+start_btn.addEventListener("click", ()=>{start_btn.style.display = "none";});
+start_btn.addEventListener("click", ()=>{createGamePad()});
 
-canvas.clientHeight = parentDiv.clientHeight;
+
+
+
+function createGamePad(){
+    let canvas = document.createElement("canvas");
+    let ctx = canvas.getContext("2d");
+
+
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.borderRadius = "1.5rem";
+    canvas.style.border = "2px solid black";
+    ctx.fillRect(25,25,25,25);
+    
+
+    gamePad.appendChild(canvas);
+}
+
+
+
+
 
 
