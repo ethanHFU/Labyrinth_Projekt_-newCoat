@@ -91,6 +91,7 @@ function direction(e) {
 }
 
 
+
 function drawBall(){
     ctx.beginPath();
     ctx.arc(posX, posY, 10, 0, Math.PI*2);
@@ -105,6 +106,15 @@ function draw() {
     drawBall();
     posX += dx;
     posY += dy;
+
+    if(posX == canvas.width - 10 || posX == 0 + 10){
+        dx = -dx;
+    }
+    if(posY == canvas.height - 10 || posY == 0 + 10){
+        dy = -dy;
+    }
+
+
 }
 
 function startGame(){
