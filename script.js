@@ -35,27 +35,81 @@ function start(){
 
 start_btn.addEventListener("click", ()=>{start_btn.style.display = "none";});
 start_btn.addEventListener("click", ()=>{createGamePad()});
+start_btn.addEventListener("click", startGame);
 
+
+
+
+
+
+let canvas = document.createElement("canvas");
+let ctx = canvas.getContext("2d");
+
+canvas.style.width = "100%";
+canvas.style.height = "100%";
+canvas.style.borderRadius = "1.5rem";
+canvas.style.border = "2px solid black";
 
 
 
 function createGamePad(){
-    let canvas = document.createElement("canvas");
-    let ctx = canvas.getContext("2d");
-
-
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    canvas.style.borderRadius = "1.5rem";
-    canvas.style.border = "2px solid black";
-    ctx.fillRect(25,25,25,25);
-    
-
+    //ctx.fillRect(25,25,25,25)
     gamePad.appendChild(canvas);
 }
 
+let posX = 25;
+let posY = canvas.height - 12.5 ;
 
 
+
+let dx = 0.5;
+let dy = 0;
+
+
+
+document.addEventListener("keydown", direction);
+
+
+function direction(e) {
+    if(e.key == "Right" || e.key == "ArrowRight") {
+        dx = 0.5;
+        dy = 0;
+    }
+    else if(e.key == "Left" || e.key == "ArrowLeft") {
+        dx = -0.5;
+        dy = 0;
+    }
+    else if(e.key == "Up" || e.key == "ArrowUp") {
+        dx = 0;
+        dy = -0.5;
+    }
+    else if(e.key == "Down" || e.key == "ArrowDown") {
+        dx = 0;
+        dy = 0.5;
+    }
+
+}
+
+
+function drawBall(){
+    ctx.beginPath();
+    ctx.arc(posX, posY, 10, 0, Math.PI*2);
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
+}
+
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBall();
+    posX += dx;
+    posY += dy;
+}
+
+function startGame(){
+    gameInterval = setInterval(draw, 10);
+}
 
 
 
