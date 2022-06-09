@@ -46,8 +46,8 @@ start_btn.addEventListener("click", startGame);
 let canvas = document.createElement("canvas");
 let ctx = canvas.getContext("2d");
 
-canvas.style.width = "100%";
-canvas.style.height = "100%";
+canvas.width = 1025;
+canvas.height = 400;
 canvas.style.borderRadius = "1.5rem";
 canvas.style.border = "2px solid black";
 
@@ -101,6 +101,22 @@ function direction(e) {
 }
 
 
+
+
+function drawBarrierTop(x, y, width, height){
+    ctx.beginPath();
+    ctx.rect(x, y, width, height);
+    ctx.fillStyle = "#000";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function drawBarrierBottom(x, y, width, height){
+    ctx.rect(x, y - height, width, height);
+}
+
+
+
 function drawBall(){
     ctx.beginPath();
     ctx.arc(posX, posY, 10, 0, Math.PI*2);
@@ -113,8 +129,16 @@ function drawBall(){
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBall();
-    posX += dx;
-    posY += dy;
+    drawBarrierTop(30, 0, 30, 200);
+    
+    if((posX + dx) >= 10 && (posX + dx) <= canvas.width - 10){
+        posX += dx;
+    }
+    
+    if ((posY + dy) >= 10 && (posY + dy) < canvas.height - 10){
+        posY += dy;
+    }
+    
 }
 
 // call draw every x ms 
