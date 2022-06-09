@@ -9,6 +9,7 @@ let interval = null;
 // Event listeners 
 start_btn.addEventListener("click", start);
 
+
 // Update timer
 
 function timer  () {
@@ -57,39 +58,47 @@ function createGamePad(){
     gamePad.appendChild(canvas);
 }
 
-let posX = 25;
-let posY = canvas.height - 12.5 ;
+let posX = canvas.width/2;
+let posY = canvas.height/2;
 
 
 
-let dx = 0.5;
+let dx = 0;
 let dy = 0;
 
 
 
 document.addEventListener("keydown", direction);
-
+document.addEventListener("keyup", ()=>{dx = 0; dy = 0;});
 
 function direction(e) {
-    if(e.key == "Right" || e.key == "ArrowRight") {
-        dx = 0.5;
-        dy = 0;
+    if(e.code === 'KeyD') {
+        if(posX < canvas.width - 10){
+            dx = 0.5;
+            dy = 0;
+        }
     }
-    else if(e.key == "Left" || e.key == "ArrowLeft") {
-        dx = -0.5;
-        dy = 0;
+    else if(e.code === 'KeyA') {
+        if(posX != 0 + 10){
+            dx = -0.5;
+            dy = 0;
+        }
     }
-    else if(e.key == "Up" || e.key == "ArrowUp") {
-        dx = 0;
-        dy = -0.5;
+    else if(e.code === 'KeyW') {
+        if(posY != 0 + 10){
+            dx = 0;
+            dy = -0.5;
+        }
     }
-    else if(e.key == "Down" || e.key == "ArrowDown") {
-        dx = 0;
-        dy = 0.5;
+
+    else if(e.code === 'KeyS') {
+        if(posY != canvas.height - 10){
+            dx = 0;
+            dy = 0.5;
+        }
     }
 
 }
-
 
 
 function drawBall(){
@@ -106,19 +115,11 @@ function draw() {
     drawBall();
     posX += dx;
     posY += dy;
-
-    if(posX == canvas.width - 10 || posX == 0 + 10){
-        dx = -dx;
-    }
-    if(posY == canvas.height - 10 || posY == 0 + 10){
-        dy = -dy;
-    }
-
-
 }
 
+// call draw every x ms 
 function startGame(){
-    gameInterval = setInterval(draw, 10);
+    gameInterval = setInterval(draw, 1);
 }
 
 
