@@ -11,7 +11,7 @@ body{
     height: 100%;
     border: 20px;
     border-style: solid;
-    border-color: black;
+    border-color: rgba(0,0,0,0);
 }
 
 main{
@@ -19,7 +19,7 @@ main{
     justify-content: center;
     align-items: center;
     height: 85%;
-    background-color: aliceblue;
+    background-color: rgba(0,0,0,0);
 }
 
 footer{
@@ -97,3 +97,11 @@ footer{
     top: auto;
     
 }
+
+#myVideo {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+  }
