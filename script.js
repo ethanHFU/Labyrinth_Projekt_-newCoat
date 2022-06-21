@@ -117,9 +117,6 @@ function drawWall(x, y, width, height){
 }
 
 
-
-
-
 function drawBall(){
     ctx.beginPath();
     ctx.arc(posX, posY, 25, 0, Math.PI*2);
@@ -131,6 +128,10 @@ function drawBall(){
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     drawBall();
     
     for(let i = 0; i < placements.length; i++){
@@ -140,19 +141,39 @@ function draw() {
 
     }
 
-    
+    posX += dx;
+    posY += dy;
 
-
-    if((posX + dx) >= 10 && (posX + dx) <= canvas.width - 10){
+   /* if((posX + dx) >= 10 && (posX + dx) <= canvas.width - 10){
         posX += dx;
     }
     
     if ((posY + dy) >= 10 && (posY + dy) < canvas.height - 10){
         posY += dy;
+    }*/
+
+
+    const rightCollision = ctx.getImageData(posX + 25, posY, 1, 1);
+
+    redForCoordOne = rightCollision.data[0];
+    greenForCoordOne = rightCollision.data[1];
+    blueForCoordOne = rightCollision.data[2];
+    
+
+    if(redForCoordOne == 0 && greenForCoordOne == 0 && blueForCoordOne == 0){
+        dx = 0;
     }
 
-    
+    console.log(redForCoordOne  + " " + greenForCoordOne + " " + blueForCoordOne);
+
+
+
 }
+
+  
+
+    
+
 
 // call draw every x ms 
 function startGame(){
@@ -160,11 +181,19 @@ function startGame(){
     generateWallInfo(5, 50, 100);
 }
 
-ctx.getImageData
+
+function getColorIndicesForCoord(x, y, width) {
+    const redOne = y * (width * 4) + (x + 25) * 4;
+    const redTwo = y * (width * 4) + (x - 25) * 4;
+    return [redOne, redOne + 1, redOne + 2, redTwo, redTwo + 1, redTwo + 2];
+  }
+
+
+
+
+
 
 function generateWallInfo(segments, minOpening, maxOpening){
-
-    
 
     for(let i = 0; i < segments; i++){
         
