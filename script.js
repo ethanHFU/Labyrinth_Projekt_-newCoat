@@ -35,83 +35,285 @@ function start(){
     interval = setInterval(timer, 1000)
 }
 
-//game starts
-start_btn.addEventListener("click", ()=>{start_btn.style.display = "none";});
-start_btn.addEventListener("click", ()=>{createGamePad()});
-const placements = [];
-start_btn.addEventListener("click", startGame);
+
+let level = 0;
 
 
 
 
 
 
-const canvas = document.createElement("canvas");
-let ctx = canvas.getContext("2d");
 
 
-canvas.height = screen.height * (0.85*0.7);
-canvas.width = screen.width * (0.7);
-canvas.style.borderRadius = "1.5rem";
-canvas.style.border = "2px solid black";
+let maze = document.getElementById("maze");
+let ctx = maze.getContext("2d");
 
+let num = 0;
 
 
 
-function createGamePad(){
-    //ctx.fillRect(25,25,25,25)
-    gamePad.appendChild(canvas);
+let current;
+
+class Maze {
+    constructor(size, rows, columns, width, height){
+        this.size = size; 
+        this.width = width;
+        this.height = height;
+        this.rows = rows;
+        this.columns = columns;
+        this.grid = [];
+        this.stack = []; 
+    }
+
+    setup(){
+        for(let r = 0; r < this.rows; r++){
+            let row = [];
+            for(let c = 0; c < this.columns; c++){
+                let cell = new Cell(r, c, this.grid, this.size, this.width, this.height);
+                row.push(cell);
+            }
+            this.grid.push(row);
+        }
+
+        let row = getRandomIntInclusive(0, this.rows - 1);
+        let col = getRandomIntInclusive(0, this.columns - 1);
+
+        current = this.grid[row][col];
+    }
+
+
+    
+
+
+
+    draw(){
+        maze.width = this.width;
+        maze.height = this.height;
+        //maze.style.background = "black";
+        current.visited = true;
+
+        for(let r = 0; r < this.rows; r++){
+            for(let c = 0; c < this.columns; c++){
+                let grid = this.grid;
+                grid[r][c].show(this.size, this.rows, this.columns, this.width, this.height);
+            }
+        }
+
+        let next = current.checkNeighbours();
+
+        if(next){
+            next.visited = true;
+            
+            this.stack.push(current);
+
+            current.highlight(this.columns, this.rows);
+
+            current.removeWall(current, next);
+
+            current = next;
+        }else if(this.stack.length > 0){
+
+            let cell = this.stack.pop();
+            current = cell;
+            current.highlight(this.columns, this.rows);
+        }
+
+    if (this.stack.length == 0){
+        return;
+    }
+
+    this.draw();
+    /*while (num < 1){
+        this.draw();
+        num++;
+    }*/
+
+
+
+
+    /*window.requestAnimationFrame(()=>{
+        this.draw();
+    });*/
+        
+    }
+}
+class Cell { 
+    constructor(rowNum, colNum, parentGrid, parentSize, parentWidth, parentHeight){
+        this.rowNum = rowNum;
+        this.colNum = colNum;
+        this.parentGrid = parentGrid;
+        this.parentSize = parentSize;
+        this.parentWidth = parentWidth;
+        this.parentHeight = parentHeight;
+        this.visited = false;
+        this.walls = {
+            topWall : true,
+            rightWall : true,
+            bottomWall : true,
+            leftWall : true,
+        };
+    }
+
+checkNeighbours(){
+    let grid = this.parentGrid;
+    let row = this.rowNum;
+    let col = this.colNum;
+    let neighbours = [];
+
+    let top = row !== 0 ? grid[row-1][col] : undefined;
+    let right = col !== grid.length - 1 ? grid[row][col + 1] : undefined;
+    let bottom = row !== grid.length - 1 ? grid[row + 1][col] : undefined;
+    let left = col !== 0 ? grid[row][col - 1] : undefined;
+
+    if (top && !top.visited) neighbours.push(top);
+    if (right && !right.visited) neighbours.push(right);
+    if (bottom && !bottom.visited) neighbours.push(bottom);
+    if (left && !left.visited) neighbours.push(left);
+
+    if(neighbours.length !== 0){
+        let random = Math.floor(Math.random() * neighbours.length);
+        return neighbours[random];
+    }else{
+        return undefined;
+    }
+
+
+
 }
 
-let posX = 35;
-let posY = canvas.height/2;
-
-
-
-let dx = 0;
-let dy = 0;
-
-let speed = 2;
-
-document.addEventListener("keydown", direction);
-
-
-function direction(e) {
-    if(e.code === 'KeyD') {
-        if(posX < canvas.width - 10){
-            dx = speed;
-            dy = 0;
-        }
-    }
-    else if(e.code === 'KeyA') {
-        if(posX != 0 + 10){
-            dx = -speed;
-            dy = 0;
-        }
-    }
-    else if(e.code === 'KeyW') {
-        if(posY != 0 + 10){
-            dx = 0;
-            dy = -speed;
-        }
+    drawTopWall(x, y, size, columns, rows, width, height){
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + width/columns, y);
+        ctx.stroke();
     }
 
-    else if(e.code === 'KeyS') {
-        if(posY != canvas.height - 10){
-            dx = 0;
-            dy = speed;
+    drawRightWall(x, y, size, columns, rows, width, height){
+        ctx.beginPath();
+        ctx.moveTo(x + width/columns, y);
+        ctx.lineTo(x + width/columns, y + height/ rows);
+        ctx.stroke();
+    }
+
+    drawBottomWall(x, y, size, columns, rows, width, height){
+        ctx.beginPath();
+        ctx.moveTo(x, y + height / rows);
+        ctx.lineTo(x + width / columns, y + height / rows);
+        ctx.stroke();
+    }
+
+    drawLeftWall(x, y, size, columns, rows, width, height){
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + height / rows);
+        ctx.stroke();
+    }
+
+
+
+    highlight(columns, rows){
+        let x = (this.colNum * this.parentWidth) / columns + 1;
+        let y = (this.rowNum * this.parentHeight) / rows + 1;
+
+        ctx.fillStyle = "purple";
+        ctx.fillRect(x, y, this.parentWidth/columns - 3, this.parentHeight/rows - 3);
+    }
+
+
+
+    removeWall(cell1, cell2){
+        let x = cell1.colNum - cell2.colNum;
+       
+        if(x == 1){
+            cell1.walls.leftWall = false;
+            cell2.walls.rightWall = false;
+        }else if (x == -1){
+            cell1.walls.rightWall = false;
+            cell2.walls.leftWall = false;
+        }
+
+        let y = cell1.rowNum - cell2.rowNum;
+
+        if(y == 1){
+            cell1.walls.topWall = false,
+            cell2.walls.bottomWall = false;
+        }else if(y == -1){
+            cell1.walls.bottomWall = false,
+            cell2.walls.topWall = false;
+        }
+
+    }
+
+    show(size, rows, columns, width, height){
+        let x = (this.colNum * width) / columns;
+        let y = (this.rowNum * height) / rows;
+        
+        ctx.strokeStyle = 'black';
+        ctx.fillStyle = 'white';
+        ctx.lineWidth = 2;
+
+        if (this.walls.topWall) this.drawTopWall(x, y, size, columns, rows, width, height);
+        if (this.walls.rightWall) this.drawRightWall(x, y, size, columns, rows, width, height);
+        if (this.walls.bottomWall) this.drawBottomWall(x, y, size, columns, rows, width, height);
+        if (this.walls.leftWall) this.drawLeftWall(x, y, size, columns, rows, width, height);
+        if (this.visited){
+            ctx.fillRect(x + 1, y + 1, width / columns - 2, height / rows - 2);
         }
     }
 
 }
 
 
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min +1)) + min;
+  }
 
 
-function drawWall(x, y, width, height){
+
+
+  function getCellIndexByXY(x, y, width, height, columns, rows){
+
+    let xNew = x % (width/columns);
+    let yNew = y % (height/rows);
+    let colIndex = ((x - xNew) / (width/columns));
+    let rowIndex = ((y - yNew) / (height/rows));
+
+    let indeces = {colIndex, rowIndex};
+    return indeces;
+
+
+  }
+
+
+
+
+
+
+let mWidth = 500;
+let mHeight = 500;
+let mSize = mWidth*mHeight;
+let mRows = 0.014 * mHeight;
+let mColumns = 0.014 * mWidth;
+
+
+let newMaze = new Maze(mSize, mRows, mColumns, mWidth, mHeight);
+newMaze.setup();
+newMaze.draw();
+
+
+let goalPosX = getRandomIntInclusive(0, mColumns - 1);
+let goalPosY = getRandomIntInclusive(0, mRows - 1);
+
+let playerPosX = mWidth/2;
+let playerPosY = mHeight/2;
+
+function drawGoal(x, y, width, height, columns, rows){
+   
     ctx.beginPath();
-    ctx.rect(x, y, width, height);
-    ctx.fillStyle = "#000";
+    ctx.arc(x * (width/columns) + (width/columns/2), y * (height/rows) + (height/rows/2), 15, 0, Math.PI*2);
+    ctx.fillStyle = "#0095DD";
     ctx.fill();
     ctx.closePath();
 }
@@ -119,41 +321,109 @@ function drawWall(x, y, width, height){
 
 function drawBall(){
     ctx.beginPath();
-    ctx.arc(posX, posY, 25, 0, Math.PI*2);
-    ctx.fillStyle = "#0095DD";
+    ctx.arc(playerPosX, playerPosY, 16, 0, Math.PI*2);
+    ctx.fillStyle = "#000000";
     ctx.fill();
     ctx.closePath();
 }
 
 
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+let dx = 0;
+let dy = 0;
 
+document.addEventListener("keydown", direction);
+document.addEventListener("keydown", (e)=>{if (e.code === "Space") {dx = 0; dy = 0;}});
+
+function direction(e) {
+    if(e.code === 'KeyD') {
+       
+            dx = 1;
+            dy = 0;
+        
+    }
+    else if(e.code === 'KeyA') {
+        
+            dx = -1;
+            dy = 0;
+        
+    }
+    else if(e.code === 'KeyW') {
+        
+            dx = 0;
+            dy = -1;
+        
+    }
+
+    else if(e.code === 'KeyS') {
+       
+            dx = 0;
+            dy = 1;
+        
+    }
+
+}
+
+
+
+let memorizedCell = getCellIndexByXY(playerPosX, playerPosY, mWidth, mHeight, mColumns, mRows);
+
+
+function drawGame() {
+    ctx.clearRect(0, 0, maze.width, maze.height);
+    
+    ctx.fillRect(0, 0, maze.width, maze.height);
+    
+    newMaze.draw(goalPosX, goalPosY, mSize, mColumns, mRows);
+    //console.log(newMaze.grid[0][0].walls.bottomWall);
+    drawGoal(goalPosX, goalPosY, mWidth, mHeight, mColumns, mRows);
     drawBall();
     
-    for(let i = 0; i < placements.length; i++){
-        
-        drawWall(placements[i].x, 0, 20, placements[i].pos);
-        drawWall(placements[i].x, placements[i].pos + placements[i].opening, 20, canvas.height - placements[i].pos - placements[i].opening);
+    playerPosX += dx;
+    playerPosY += dy;
 
-    }
-
-    posX += dx;
-    posY += dy;
-
-   /* if((posX + dx) >= 10 && (posX + dx) <= canvas.width - 10){
-        posX += dx;
-    }
+    let currentCell = getCellIndexByXY(playerPosX, playerPosY, mWidth, mHeight, mColumns, mRows);
     
-    if ((posY + dy) >= 10 && (posY + dy) < canvas.height - 10){
-        posY += dy;
-    }*/
+    //console.log(currentCell.xNew + "   " + currentCell.yNew);
 
+    if(currentCell.colIndex !== memorizedCell.colIndex || currentCell.rowIndex !== memorizedCell.rowIndex ){
+        console.log(currentCell.colIndex + "  " + currentCell.rowIndex);
+        memorizedCell.colIndex = currentCell.colIndex;
+        memorizedCell.rowIndex = currentCell.rowIndex;
 
-    const rightCollision = ctx.getImageData(posX + 25, posY, 1, 1);
+    };
+
+    if(newMaze.grid[currentCell.rowIndex][currentCell.colIndex].walls.rightWall){
+        
+        if(playerPosX + 16 >= (currentCell.colIndex * (mWidth/mColumns)) + (mWidth/mColumns)){
+            dx = 0;
+        }
+    };
+
+    if(newMaze.grid[currentCell.rowIndex][currentCell.colIndex].walls.leftWall){
+        
+        if(playerPosX - 16 <= (currentCell.colIndex * (mWidth/mColumns))){
+            dx = 0;
+        }
+    };
+
+    if(newMaze.grid[currentCell.rowIndex][currentCell.colIndex].walls.topWall){
+        
+        if(playerPosY - 16 <= (currentCell.rowIndex * (mHeight/mRows))){
+            dy = 0;
+        }
+    };
+
+    if(newMaze.grid[currentCell.rowIndex][currentCell.colIndex].walls.bottomWall){
+        
+        if(playerPosY + 16 >= (currentCell.rowIndex * (mHeight/mRows)) + (mHeight/mRows)){
+            dy = 0;
+        }
+    };
+
+   
+
+  
+    /*const rightCollision = ctx.getImageData(playerPosX + 8, playerPosY, 1, 1);
 
     redForCoordOne = rightCollision.data[0];
     greenForCoordOne = rightCollision.data[1];
@@ -164,62 +434,24 @@ function draw() {
         dx = 0;
     }
 
-    console.log(redForCoordOne  + " " + greenForCoordOne + " " + blueForCoordOne);
+    /*const leftCollision = ctx.getImageData(playerPosX, playerPosY, 1, 1);
 
-
-
-}
-
-  
-
+    redForCoordOne = rightCollision.data[0];
+    greenForCoordOne = rightCollision.data[1];
+    blueForCoordOne = rightCollision.data[2];
     
 
-
-// call draw every x ms 
-function startGame(){
-    gameInterval = setInterval(draw, 1);
-    generateWallInfo(5, 50, 100);
-}
-
-
-function getColorIndicesForCoord(x, y, width) {
-    const redOne = y * (width * 4) + (x + 25) * 4;
-    const redTwo = y * (width * 4) + (x - 25) * 4;
-    return [redOne, redOne + 1, redOne + 2, redTwo, redTwo + 1, redTwo + 2];
-  }
-
-
-
-
-
-
-function generateWallInfo(segments, minOpening, maxOpening){
-
-    for(let i = 0; i < segments; i++){
-        
-        let delta = canvas.width/segments;
-
-        let openingSize = getRndInteger(minOpening, maxOpening);
-        
-
-        let openingY = getRndInteger(0, canvas.height - openingSize);
-
-
-
-        const wall = {x:(i + 1)*delta, opening:openingSize, pos:openingY};
-
-        placements[i] = wall;
-
-    }
-
-}
-
-function getRndInteger(min, max) {
-    let x = Math.floor(Math.random() * (max - min) ) + min;
+    if(redForCoordOne == 0 && greenForCoordOne == 0 && blueForCoordOne == 0){
+        dx = 0;
+    }*/
     
+    //console.log(newMaze.grid[0][0].walls.bottomWall);
+    
+    //console.log(redForCoordOne  + " " + greenForCoordOne + " " + blueForCoordOne);
 
-    return x;
-  }
 
 
+}
+    //drawGame();
+    gameInterval = setInterval(drawGame, 16);
 
