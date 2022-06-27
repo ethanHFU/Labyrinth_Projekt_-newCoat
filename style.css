@@ -10,8 +10,7 @@ html{
 body{
     height: 100%;
     border: 20px;
-    /*border-style: solid;
-    /*border-color: rgba(0,0,0,0);*/
+    
 }
 
 main{
@@ -19,7 +18,7 @@ main{
     justify-content: center;
     align-items: center;
     height: 85%;
-   /* background-color: rgba(0,0,0,0);*/
+  
 }
 
 footer{

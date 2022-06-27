@@ -303,19 +303,16 @@ newMaze.setup();
 newMaze.draw();
 
 
-let goalPosX = getRandomIntInclusive(0, mColumns - 1);
-let goalPosY = getRandomIntInclusive(0, mRows - 1);
+let goalPosX = getRandomIntInclusive(0, mColumns - 1) * (mWidth/mColumns);
+let goalPosY = getRandomIntInclusive(0, mRows - 1) * (mHeight/mRows);
 
 let playerPosX = mWidth/2;
 let playerPosY = mHeight/2;
 
 function drawGoal(x, y, width, height, columns, rows){
    
-    ctx.beginPath();
-    ctx.arc(x * (width/columns) + (width/columns/2), y * (height/rows) + (height/rows/2), 15, 0, Math.PI*2);
-    ctx.fillStyle = "#0095DD";
-    ctx.fill();
-    ctx.closePath();
+    ctx.fillStyle = "rgba(0, 255, 0, .3)";
+    ctx.fillRect(x+2, y+2, mWidth/columns-2, mHeight/rows-2);
 }
 
 
@@ -420,34 +417,19 @@ function drawGame() {
         }
     };
 
-   
 
-  
-    /*const rightCollision = ctx.getImageData(playerPosX + 8, playerPosY, 1, 1);
-
-    redForCoordOne = rightCollision.data[0];
-    greenForCoordOne = rightCollision.data[1];
-    blueForCoordOne = rightCollision.data[2];
-    
-
-    if(redForCoordOne == 0 && greenForCoordOne == 0 && blueForCoordOne == 0){
-        dx = 0;
+    //goal reached
+    if(playerPosX - 16 >= goalPosX && playerPosX + 16 <= goalPosX + (mWidth/mColumns)){
+        if(playerPosY - 16>= goalPosY && playerPosY + 16 <= goalPosY + (mHeight/mRows)){
+            dx = 0;
+            dy = 0;
+        }
     }
 
-    /*const leftCollision = ctx.getImageData(playerPosX, playerPosY, 1, 1);
 
-    redForCoordOne = rightCollision.data[0];
-    greenForCoordOne = rightCollision.data[1];
-    blueForCoordOne = rightCollision.data[2];
-    
+  
 
-    if(redForCoordOne == 0 && greenForCoordOne == 0 && blueForCoordOne == 0){
-        dx = 0;
-    }*/
-    
-    //console.log(newMaze.grid[0][0].walls.bottomWall);
-    
-    //console.log(redForCoordOne  + " " + greenForCoordOne + " " + blueForCoordOne);
+   
 
 
 
