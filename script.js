@@ -36,7 +36,7 @@ function start(){
 }
 
 
-let level = 0;
+let level = 3;
 
 
 
@@ -46,7 +46,17 @@ let level = 0;
 
 
 let maze = document.getElementById("maze");
+maze.style.display = "none";
 let ctx = maze.getContext("2d");
+
+start_btn.addEventListener("click", ()=>
+{
+    start_btn.style.display = "none";
+    maze.style.display = "block";
+});
+
+
+
 
 let num = 0;
 
@@ -106,7 +116,7 @@ class Maze {
             
             this.stack.push(current);
 
-            current.highlight(this.columns, this.rows);
+            //current.highlight(this.columns, this.rows);
 
             current.removeWall(current, next);
 
@@ -115,7 +125,7 @@ class Maze {
 
             let cell = this.stack.pop();
             current = cell;
-            current.highlight(this.columns, this.rows);
+            //current.highlight(this.columns, this.rows);
         }
 
     if (this.stack.length == 0){
@@ -328,34 +338,58 @@ function drawBall(){
 let dx = 0;
 let dy = 0;
 
+let rightStopped = false;
+let leftStopped = false;
+let topStopped = false;
+let bottomStopped = false;
+
+
+
 document.addEventListener("keydown", direction);
 document.addEventListener("keydown", (e)=>{if (e.code === "Space") {dx = 0; dy = 0;}});
 
 function direction(e) {
     if(e.code === 'KeyD') {
-       
-            dx = 1;
-            dy = 0;
         
+        if(!rightStopped){
+            dx = 2;
+            dy = 0;
+            leftStopped = false;
+            topStopped = false;
+            bottomStopped = false;
+        }
+    
     }
     else if(e.code === 'KeyA') {
         
-            dx = -1;
+        if(!leftStopped){
+            dx = -2;
             dy = 0;
-        
+            rightStopped = false;
+            topStopped = false;
+            bottomStopped = false;
+        }
     }
     else if(e.code === 'KeyW') {
-        
+        if(!topStopped){
             dx = 0;
-            dy = -1;
+            dy = -2;
+            rightStopped = false;
+            leftStopped = false;
+            bottomStopped = false;
+        }
         
     }
 
     else if(e.code === 'KeyS') {
        
+        if(!bottomStopped){
             dx = 0;
-            dy = 1;
-        
+            dy = 2;
+            rightStopped = false;
+            leftStopped = false;
+            topStopped = false;
+        }
     }
 
 }
@@ -393,6 +427,7 @@ function drawGame() {
         
         if(playerPosX + 16 >= (currentCell.colIndex * (mWidth/mColumns)) + (mWidth/mColumns)){
             dx = 0;
+            rightStopped = true;
         }
     };
 
@@ -400,6 +435,7 @@ function drawGame() {
         
         if(playerPosX - 16 <= (currentCell.colIndex * (mWidth/mColumns))){
             dx = 0;
+            leftStopped = true;
         }
     };
 
@@ -407,6 +443,7 @@ function drawGame() {
         
         if(playerPosY - 16 <= (currentCell.rowIndex * (mHeight/mRows))){
             dy = 0;
+            topStopped = true;
         }
     };
 
@@ -414,6 +451,7 @@ function drawGame() {
         
         if(playerPosY + 16 >= (currentCell.rowIndex * (mHeight/mRows)) + (mHeight/mRows)){
             dy = 0;
+            bottomStopped = true;
         }
     };
 
@@ -423,6 +461,25 @@ function drawGame() {
         if(playerPosY - 16>= goalPosY && playerPosY + 16 <= goalPosY + (mHeight/mRows)){
             dx = 0;
             dy = 0;
+            
+            
+
+            level++;
+
+            if(level >= 3){
+                mWidth = 650;
+                mHeight = 650;
+                mSize = mWidth*mHeight;
+                mRows = 0.02 * mHeight;
+                mColumns = 0.02 * mWidth;
+            }
+            playerPosX = mWidth/2;
+            playerPosY = mHeight/2;
+            newMaze = new Maze(mSize, mRows, mColumns, mWidth, mHeight);
+            newMaze.setup();
+            
+            
+
         }
     }
 

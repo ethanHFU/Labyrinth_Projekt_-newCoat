@@ -27,16 +27,18 @@ footer{
     align-items: center;
     gap: 20px;
     height: 15%;
-    background-color: azure;
+   
 }
 
 #gameDisplay{
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
+    position: absolute;
+    top: 175px;
     height: 70%;
     width: 70%;
+    background: rgba(0, 0, 0, 0);
 }
 
 #playWhite{
@@ -87,18 +89,36 @@ footer{
 
 }
 
-#gameDisplay{
-   /* border: 2px solid black;*/
+
+
+#leftBanner{
     position: absolute;
-    left: auto;
-    top: auto;
+    top: 0;
+    left: 0;
+    width: 15%;
+    height: 100%;
+    background: black;
+  }
+  
+#rightBanner{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 15%;
+    height: 100%;
+    background: black;
+  }
+
+#logo{
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
     
+   
 }
 
-#myVideo {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    min-width: 100%;
-    min-height: 100%;
-  }
+#info{
+    position:absolute;
+    right: 700px;
+    top: 30px;
+}
